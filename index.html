@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090b24">
+<title>Samar's Unexpected Adventure</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&family=Orbitron:wght@500;700;900&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    #29265e,
+    #0b1030 50%,
+    #070817
+  );
+  color: #f8f7ff;
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+}
+
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 22px 14px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.screen.active {
+  display: flex;
+  animation: fade .45s ease;
+}
+
+@keyframes fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+  to {
+    opacity: .15;
+    transform: scale(.5);
+  }
+}
+
+.panel {
+  width: min(760px, 100%);
+  padding: clamp(20px, 5vw, 42px);
+  border: 1px solid #8ceeff55;
+  border-radius: 28px;
+  background: linear-gradient(145deg, #17183ee8, #0d1029ed);
+  box-shadow: 0 0 35px #5c4dff22;
+  backdrop-filter: blur(10px);
+}
+
+.eyebrow {
+  font: 700 10px Orbitron, sans-serif;
+  letter-spacing: .2em;
+  color: #7df9ff;
+}
+
+h1, h2 {
+  font-family: Orbitron, 'Baloo 2', sans-serif;
+  line-height: 1.25;
+  margin: 12px 0;
+}
+
+h1 {
+  font-size: clamp(26px, 6vw, 50px);
+  text-shadow: 0 0 22px #8c78ff88;
+}
+
+h2 {
+  font-size: clamp(20px, 4vw, 31px);
+}
+
+p {
+  font-size: clamp(16px, 2.6vw, 20px);
+  line-height: 1.5;
+  color: #d9defe;
+}
+
+.small {
+  font-size: 13px;
+  color: #aeb8e7;
+}
+
+.btn {
+  padding: 12px 23px;
+  margin: 8px;
+  border-radius: 999px;
+  color: #071025;
+  font-weight: 800;
+  background: linear-gradient(100deg, #7df9ff, #c1a4ff);
+  box-shadow: 0 7px 22px #70eaff30;
+  transition: .2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn.secondary {
+  color: #fff;
+  background: #25284f;
+  border: 1px solid #7df9ff66;
+  box-shadow: none;
+}
+
+.btn.pink {
+  background: linear-gradient(100deg, #ff70c8, #ffb2d8);
+}
+
+.hero {
+  font-size: clamp(60px, 14vw, 110px);
+  filter: drop-shadow(0 0 24px #7df9ff77);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  50% { transform: translateY(-12px); }
+}
+
+.portal {
+  width: 155px;
+  height: 155px;
+  margin: 18px auto;
+  border-radius: 50%;
+  border: 5px solid #8ffaff;
+  box-shadow: 0 0 20px #65faff, inset 0 0 25px #d9aaff;
+  background: radial-gradient(
+    circle,
+    #fff 0%,
+    #a5a0ff 10%,
+    #382c9b 38%,
+    #111638 63%,
+    transparent 66%
+  );
+  animation: portal 3s linear infinite;
+}
+
+@keyframes portal {
+  to {
+    transform: rotate(360deg);
+    filter: hue-rotate(70deg);
+  }
+}
+
+.progress {
+  height: 8px;
+  background: #292b50;
+  border-radius: 20px;
+  margin: 0 auto 18px;
+  overflow: hidden;
+}
+
+.progress span, .meter span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #7df9ff, #ff70c8);
+  transition: width .3s;
+}
+
+.leveltop {
+  display: flex;
+  justify-content: space-between;
+  font: 700 10px Orbitron, sans-serif;
+  color: #aeb8e7;
+  margin-bottom: 10px;
+}
+
+.scene {
+  font-size: clamp(48px, 12vw, 86px);
+  margin: 12px auto;
+  filter: drop-shadow(0 0 18px #9e8aff66);
+  animation: float 3s ease-in-out infinite;
+}
+
+.choices, .cardrow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.choice {
+  min-width: 125px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  color: #f7f6ff;
+  background: #24264e;
+  border: 1px solid #7df9ff55;
+}
+
+.choice:hover, .tile:hover {
+  border-color: #7df9ff;
+  transform: translateY(-2px);
+}
+
+.feedback {
+  min-height: 28px;
+  color: #ffe28a;
+  font-weight: 700;
+}
+
+.meter {
+  height: 10px;
+  background: #2b2e56;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px auto;
+  max-width: 360px;
+}
+
+.gamebox {
+  max-width: 420px;
+  margin: 16px auto;
+  padding: 18px;
+  border-radius: 20px;
+  background: #090d29;
+  border: 1px solid #8ceeff44;
+}
+
+.tile {
+  width: 100px;
+  min-height: 95px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #2c2b69, #121632);
+  border: 1px solid #8ceeff55;
+  color: white;
+  font-size: 35px;
+  transition: .2s;
+}
+
+input {
+  width: 180px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid #8ceeff88;
+  background: #101633;
+  color: white;
+  font: 700 20px Orbitron;
+  text-align: center;
+  letter-spacing: .2em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.confetti {
+  position: fixed;
+  top: -15px;
+  z-index: 5;
+  pointer-events: none;
+  animation: fall 2.8s linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+
+<section class="screen active" id="intro">
+  <div class="panel">
+    <div class="eyebrow">A TINY GAME MADE JUST FOR YOU</div>
+    <div class="portal"></div>
+    <h1>SAMAR'S<br>UNEXPECTED ADVENTURE</h1>
+    <p>One portal. Fifteen levels. A few secrets you definitely weren't expecting.</p>
+    <button class="btn" onclick="startGame()">▶ START ADVENTURE</button>
+    <p class="small">Explore at your own pace. The surprises are waiting.</p>
+  </div>
+</section>
+
+<section class="screen" id="game">
+  <div class="panel">
+    <div class="leveltop">
+      <span id="levelLabel">LEVEL 01 / 15</span>
+      <span id="scoreLabel">✦ 0</span>
+    </div>
+
+    <div class="progress">
+      <span id="progressBar"></span>
+    </div>
+
+    <div class="eyebrow" id="chapter"></div>
+    <div class="scene" id="scene"></div>
+    <h2 id="title"></h2>
+    <p id="story"></p>
+    <div id="gameArea"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <button class="btn hidden" id="nextBtn" onclick="nextLevel()">
+      CONTINUE ➜
+    </button>
+
+    <button class="btn secondary" onclick="showExit()">⏸ Pause</button>
+  </div>
+</section>
+
+<section class="screen" id="ending">
+  <div class="panel">
+    <div class="eyebrow">ADVENTURE COMPLETE</div>
+    <div class="hero">🏆✨</div>
+    <h1>YOU FOUND THE SECRET!</h1>
+    <p>Plot twist: the real treasure was never a chest or a kingdom. It was getting to make this little adventure for you.</p>
+    <p>I'm glad you're in my life, Samar. I hope good things keep finding you, and that you get all the happiness and success you deserve.</p>
+    <div class="hero" style="font-size:60px">🌼🌺💫</div>
+    <h2>Never ♡</h2>
+    <button class="btn" onclick="restart()">PLAY AGAIN</button>
+  </div>
+</section>
+
+<section class="screen" id="pause">
+  <div class="panel">
+    <div class="hero">⏸️</div>
+    <h2>Adventure paused</h2>
+    <p>Your progress is safe on this page.</p>
+    <button class="btn" onclick="resume()">BACK TO GAME</button>
+  </div>
+</section>
+<script>
+const $ = id => document.getElementById(id);
+
+for (let i = 0; i < 90; i++) {
+  let s = document.createElement('i');
+  s.className = 'star';
+  s.style.left = Math.random() * 100 + '%';
+  s.style.top = Math.random() * 100 + '%';
+  s.style.animationDelay = Math.random() * 3 + 's';
+  s.style.opacity = .2 + Math.random() * .7;
+  $('stars').appendChild(s);
+}
+
+let level = 0, score = 0, done = false, timer = null;
+
+const levels = [
+['THE MYSTERIOUS BEGINNING','🌀','The portal is waiting','A strange light appears in the sky. Something is waiting on the other side.','choice',['Step inside','Walk around','Knock first'],0],
+['ENTER THE UNKNOWN','🌌','A world in the clouds','You land on a floating island. A glowing path splits into three directions.','choice',['Crystal bridge','Cloud tunnel','Star staircase'],2],
+['THE FIRST CHALLENGE','⭐','Collect the starlight','Tap five stars to charge the portal.','collect',5],
+['THE SKY ROLLER COASTER','🎢','Hold on tight!','Choose the track for your wild ride through the sky.','choice',['Rainbow loop','Meteor tunnel','Moonlit drop'],1],
+['THE LOST KINGDOM','🏰','The kingdom’s gate','Three symbols are carved into the gate. Pick the one that shines brightest.','choice',['🌙 Moon','☀️ Sun','💎 Crystal'],2],
+['THE SECRET DOOR','🚪','Unlock the door','A three-digit code is hidden in this clue: 2 stars + 3 stars = ?','code'],
+['THE IMPOSSIBLE MAZE','🧩','Choose your way','The maze is shifting! Pick the path marked by the guiding light.','choice',['Left path 🌑','Middle path ✨','Right path 🌫️'],1],
+['THE SPEED CHALLENGE','⚡','Lightning reflexes','Tap the glowing button 10 times before the timer ends.','speed'],
+['THE HIDDEN TREASURE','🎁','Which chest is it?','Only one chest holds the next clue. Choose carefully!','chests'],
+['THE UPSIDE-DOWN WORLD','🪐','Gravity has left the chat','Choose the floating key to restore gravity.','choice',['🗝️ Floating key','🪨 Heavy rock','🪞 Mirror'],0],
+['THE SECRET GARDEN','🌺','A garden in the stars','Choose a flower to reveal a little wish.','flowers'],
+['THE MEMORY PORTAL','💫','A little memory','Some journeys begin in unexpected ways. 15 February became a special date in this little universe.','choice',['Keep the memory','Make a new one','Both, obviously'],2],
+['THE FINAL MISSION','🚀','Power up the ship','The ship needs three energy crystals. Tap them to launch!','collect',3],
+['THE UNEXPECTED ENDING','🌠','You reached the end… or did you?','A message appears: “Explorer, there is one last thing you should know.”','choice',['Reveal the secret','I knew it!','Open the final portal'],2],
+['THE ULTIMATE SURPRISE','💖','The real treasure','You made it through every level. Here is your final surprise.','final']
+];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+function startGame() {
+  level = 0;
+  score = 0;
+  loadLevel();
+  show('game');
+}
+
+function loadLevel() {
+  done = false;
+  clearInterval(timer);
+  let d = levels[level];
+
+  $('levelLabel').textContent =
+    `LEVEL ${String(level + 1).padStart(2,'0')} / 15`;
+  $('scoreLabel').textContent = '✦ ' + score;
+  $('progressBar').style.width = (level / 15 * 100) + '%';
+  $('chapter').textContent = d[0];
+  $('scene').textContent = d[1];
+  $('title').textContent = d[2];
+  $('story').textContent = d[3];
+  $('feedback').textContent = '';
+  $('nextBtn').classList.add('hidden');
+  $('nextBtn').textContent =
+    level === 14 ? 'SEE THE ENDING ✨' : 'CONTINUE ➜';
+  $('gameArea').innerHTML = '';
+
+  let type = d[4];
+  if (type === 'choice') choice(d);
+  if (type === 'collect') collect(d[5]);
+  if (type === 'code') code();
+  if (type === 'speed') speed();
+  if (type === 'chests') chests();
+  if (type === 'flowers') flowers();
+  if (type === 'final') final();
+}
+
+function complete(msg) {
+  if (done) return;
+  done = true;
+  score += 100;
+  $('scoreLabel').textContent = '✦ ' + score;
+  $('feedback').textContent = msg || 'Challenge complete!';
+  $('nextBtn').classList.remove('hidden');
+  confetti(level === 14 ? 35 : 10);
+}
+
+function choice(d) {
+  let box = document.createElement('div');
+  box.className = 'choices';
+
+  d[5].forEach((c, i) => {
+    let b = document.createElement('button');
+    b.className = 'choice';
+    b.textContent = c;
+
+    b.onclick = () => {
+      if (done) return;
+
+      if (i === d[6]) {
+        complete('You found the way! The next portal opens! ✨');
+      } else {
+        $('feedback').textContent = 'Not that way! Try another path. ✨';
+      }
+    };
+
+    box.appendChild(b);
+  });
+
+  $('gameArea').appendChild(box);
+}
+
+function collect(n) {
+  let box = document.createElement('div');
+  box.className = 'gamebox';
+  box.innerHTML =
+    '<div class="meter"><span></span></div>' +
+    '<button class="btn">✨ TAP TO COLLECT ✨</button>';
+
+  let count = 0;
+  let fill = box.querySelector('span');
+  let b = box.querySelector('button');
+
+  b.onclick = () => {
+    if (done) return;
+    count++;
+    fill.style.width = count / n * 100 + '%';
+    b.textContent = '⭐ '.repeat(count) + '(' + count + '/' + n + ')';
+
+    if (count >= n) {
+      complete('All crystals collected! The next portal is open. ✨');
+    }
+  };
+
+  $('gameArea').appendChild(box);
+}
+
+function code() {
+  let box = document.createElement('div');
+  box.className = 'gamebox';
+  box.innerHTML =
+    '<p class="small">Enter the answer</p>' +
+    '<input inputmode="numeric" maxlength="3" placeholder="___">' +
+    '<br><button class="btn">UNLOCK</button>';
+
+  box.querySelector('button').onclick = () => {
+    if (box.querySelector('input').value.trim() === '5') {
+      complete('Correct! The secret door slides open.');
+    } else {
+      $('feedback').textContent = 'The clue says 2 + 3. Try again!';
+    }
+  };
+
+  $('gameArea').appendChild(box);
+}
+
+function speed() {
+  let box = document.createElement('div');
+  box.className = 'gamebox';
+  box.innerHTML =
+    '<p>Tap 10 times before time runs out!</p>' +
+    '<div class="meter"><span></span></div>' +
+    '<p>Time: <b>8</b>s</p>' +
+    '<button class="btn">⚡ TAP!</button>';
+
+  let n = 0, t = 8, started = false;
+  let b = box.querySelector('button');
+  let fill = box.querySelector('.meter span');
+  let time = box.querySelector('b');
+
+  b.onclick = () => {
+    if (done) return;
+
+    if (!started) {
+      started = true;
+      timer = setInterval(() => {
+        t--;
+        time.textContent = t;
+
+        if (t <= 0) {
+          clearInterval(timer);
+
+          if (n >= 10) {
+            complete('Speed run complete! ⚡');
+          } else {
+            $('feedback').textContent = 'Almost! Tap TRY AGAIN.';
+            b.textContent = 'TRY AGAIN';
+
+            b.onclick = () => {
+              n = 0;
+              t = 8;
+              time.textContent = t;
+              fill.style.width = '0%';
+              b.textContent = '⚡ TAP!';
+              started = false;
+            };
+          }
+        }
+      }, 1000);
+    }
+
+    n++;
+    fill.style.width = Math.min(n / 10 * 100, 100) + '%';
+
+    if (n >= 10) {
+      clearInterval(timer);
+      complete('Speed run complete! ⚡');
+    }
+  };
+
+  $('gameArea').appendChild(box);
+}
+
+function chests() {
+  let box = document.createElement('div');
+  box.className = 'cardrow';
+
+  ['🎁','🎁','🎁'].forEach((x, i) => {
+    let b = document.createElement('button');
+    b.className = 'tile';
+    b.textContent = x;
+
+    b.onclick = () => {
+      if (done) return;
+
+      if (i === 1) {
+        b.textContent = '💎';
+        complete('Aha! You found the hidden treasure!');
+      } else {
+        b.textContent = '🪄';
+        $('feedback').textContent = 'A decoy! Pick another chest.';
+      }
+    };
+
+    box.appendChild(b);
+  });
+
+  $('gameArea').appendChild(box);
+}
+
+function flowers() {
+  let box = document.createElement('div');
+  box.className = 'cardrow';
+
+  [['🌼','Marigold'],['🌺','Hibiscus'],['🌷','Tulip']].forEach(([e,n]) => {
+    let b = document.createElement('button');
+    b.className = 'tile';
+    b.innerHTML = e + '<small style="font-size:12px;display:block">' + n + '</small>';
+    b.onclick = () => complete(n + ' for a little wish and a bright day ahead.');
+    box.appendChild(b);
+  });
+
+  $('gameArea').appendChild(box);
+}
+
+function final() {
+  let box = document.createElement('div');
+  box.className = 'gamebox';
+  box.innerHTML =
+    '<div style="font-size:42px">💌</div>' +
+    '<p>Tap to open your final message.</p>' +
+    '<button class="btn pink">OPEN MESSAGE</button>' +
+    '<p class="hidden" id="finalText">' +
+    'Samar, I’m grateful you’re in my life. I hope you keep finding reasons to smile, and that your dreams take you somewhere wonderful. Thank you for being part of my story. 🌼🌺' +
+    '</p>';
+
+  box.querySelector('button').onclick = () => {
+    box.querySelector('#finalText').classList.remove('hidden');
+    complete('Adventure complete!');
+  };
+
+  $('gameArea').appendChild(box);
+}
+
+function nextLevel() {
+  if (!done) return;
+
+  if (level >= 14) {
+    show('ending');
+    confetti(40);
+    return;
+  }
+
+  level++;
+  loadLevel();
+}
+
+function confetti(n) {
+  let icons = ['✨','💫','⭐','💗','🌼'];
+
+  for (let i = 0; i < n; i++) {
+    let e = document.createElement('span');
+    e.className = 'confetti';
+    e.textContent = icons[Math.floor(Math.random() * icons.length)];
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.animationDelay = Math.random() * .8 + 's';
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 3500);
+  }
+}
+
+function showExit() {
+  clearInterval(timer);
+  show('pause');
+}
+
+function resume() {
+  show('game');
+}
+
+function restart() {
+  show('intro');
+}
+</script>
+</body>
+</html>
